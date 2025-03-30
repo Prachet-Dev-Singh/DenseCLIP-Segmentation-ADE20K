@@ -1,0 +1,71 @@
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+segmentation/venv/
+*.venv
+/conda_env/
+/miniconda*/
+/anaconda*/
+
+# Data directory & Archives
+data/
+segmentation/ADEChallengeData2016/
+segmentation/ADEChallengeData2016.zip
+*.zip
+
+# Log files and working/output directories
+work_dirs/
+segmentation/work_dirs/
+tf_logs/
+segmentation/tf_logs/
+*.log
+
+# Checkpoints and saved models
+checkpoints/
+segmentation/checkpoints/
+*.pth
+*.pt # Excludes downloaded CLIP models too if they end in .pt
+
+# Downloaded pretrained models directory (optional but recommended)
+pretrained/
+segmentation/pretrained/
+
+# Local Python Build Artifacts
+Python-*/
+segmentation/Python-*/
+
+# Temporary files from training/loading
+temp_weights.pth
+*.tmp
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor specific files
+.vscode/
+.idea/
+
+segmentation/release_test/
+
+detection/
+segmentation/release_test/
+
+# Installers and Archives
+*.sh
+*.tgz
+*.zip
+
+# Large image/gif files (if not essential docs)
+*.gif
+*.png 
+# Be more specific if you NEED some png/gif files:
+# framework.gif
+# framework.png
+

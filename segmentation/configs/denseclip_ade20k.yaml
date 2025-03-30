@@ -1,0 +1,84 @@
+# Model configuration
+model:
+  type: 'DenseCLIP'
+  # Other DenseCLIP specific parameters might go here, like:
+  context_length: 77       # Example: Context length for text prompts in DenseCLIP part
+  context_feature: 'attention' # Example
+  score_concat_index: 3   # Example
+  text_head: False        # Example
+  tau: 0.07             # Example
+  token_embed_dim: 512    # Example: Should match text_encoder output if applicable
+  text_dim: 1024          # Example: Dimension after text projection, used for gamma
+
+  backbone:
+    type: 'CLIPResNet'
+    layers: [3, 4, 6, 3]    # REQUIRED for ResNet-50
+    # Add other args required by your CLIPResNet.__init__
+    width: 64               # EXAMPLE: Default ResNet width
+    input_resolution: 224   # EXAMPLE: Typical CLIP input size (adjust if needed)
+    output_dim: 512         # EXAMPLE: Final output dim desired from backbone
+    # out_indices: [3, 5, 7, 11] # REMOVE this if CLIPResNet doesn't use it
+
+  text_encoder:
+    type: 'CLIPTextEncoder'
+    # Add args required by your CLIPTextEncoder.__init__
+    context_length: 77      # Standard CLIP context length
+    vocab_size: 49408       # Standard CLIP vocab size
+    transformer_width: 512  # Example: Width of the transformer
+    transformer_heads: 8    # Example
+    transformer_layers: 12   # Example
+    embed_dim: 1024         # Example: Output dimension BEFORE final projection (if any)
+    # out_dim: 512          # Example: Final output dimension (if text_projection exists) - Ensure matches token_embed_dim/text_dim in DenseCLIP
+
+  # Add context_decoder config if used by your DenseCLIP model
+  # context_decoder:
+  #   type: 'ContextDecoder'
+  #   transformer_width: 256 # Example
+  #   transformer_heads: 4   # Example
+  #   transformer_layers: 3  # Example
+  #   visual_dim: 1024       # Example: Should match text embed_dim if used together
+  #   dropout: 0.1          # Example
+
+  # Add neck config if used
+  # neck:
+  #   type: 'FPN' # Requires implementation/replacement
+  #   in_channels: [256, 512, 1024, 2048] # Example: Match backbone output channels
+  #   out_channels: 256
+
+  decode_head:
+    type: 'FPNHead' # Requires implementation/replacement (e.g., torchvision.models.segmentation.FCNHead)
+    # Args for the chosen head implementation
+    in_channels: 256 # Example: Should match neck out_channels (or relevant backbone channels if no neck)
+    channels: 256    # Example: Intermediate channels in the head
+    num_classes: 150 # Number of ADE20K classes
+    # Add other necessary head parameters (dropout_ratio, norm_cfg, align_corners etc.)
+    align_corners: False # Example
+
+# Data configuration
+data:
+  path: '.'
+  classes: 150 # Should match decode_head.num_classes
+  ignore_label: 255
+  crop_size: 512
+  scale_range: [0.5, 2.0]
+  # Add data loader params if needed by build_dataloader
+  samples_per_gpu: 4 # Example
+  workers_per_gpu: 4 # Example
+
+# Training configuration
+training:
+  # work_dir: 'work_dirs' # Set via command line arg --work-dir
+  epochs: 50
+  batch_size: 8 # Should match data.samples_per_gpu for clarity
+  workers: 4    # Should match data.workers_per_gpu for clarity
+  lr: 0.001
+  min_lr: 1.0e-05
+  weight_decay: 0.0001
+  log_interval: 50
+  seed: 42
+  # Add eval_interval and save_interval if needed
+  eval_interval: 1 # Example: Evaluate every epoch
+  save_interval: 1 # Example: Save every epoch
+  # Add optimizer config if more complex than AdamW defaults
+  # optimizer:
+  #   type: AdamW # Already specified in train_worker
